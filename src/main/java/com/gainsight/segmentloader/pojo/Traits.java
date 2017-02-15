@@ -29,6 +29,8 @@ public class Traits implements Serializable
     private String plan;
     @JsonProperty("logins")
     private Integer logins;
+    @JsonProperty("size")
+    private Integer size;
     @JsonProperty("address")
     private Address address;
     @JsonIgnore
@@ -83,6 +85,16 @@ public class Traits implements Serializable
     @JsonProperty("logins")
     public Integer getLogins() {
         return logins;
+    }
+
+    @JsonProperty("size")
+    public Integer getSize() {
+        return size;
+    }
+
+    @JsonProperty("size")
+    public void setSize(Integer size) {
+        this.size = size;
     }
 
     @JsonProperty("logins")

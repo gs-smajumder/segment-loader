@@ -1,5 +1,6 @@
 package com.gainsight.segmentloader.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gainsight.segmentloader.pojo.Group;
 import com.gainsight.segmentloader.pojo.Identify;
 import com.gainsight.segmentloader.pojo.Track;
@@ -13,6 +14,7 @@ import com.segment.analytics.messages.TrackMessage;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,45 +28,28 @@ public class SegmentService {
             .build();
 
     public void sendIdentifyMessage(Identify identify){
-        ImmutableMap<String, Object> objectImmutableMap
-                = ImmutableMap.<String, Object>builder()
-                .put("name", "Donald J Trump")
-                .put("email", "donald@trump.com")
-                .build();
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> traitsMap = mapper.convertValue(identify.getTraits(), Map.class);
         analytics.enqueue(IdentifyMessage.builder()
-                .userId("xfdfs343dd").timestamp(Date.from(Instant.now()))
-                .traits(objectImmutableMap));
+                .userId(identify.getUserId()).timestamp(Date.from(Instant.now()))
+                .traits(traitsMap));
     }
 
     public void sendTrackEvent(Track track){
-        //        Track track = new Track();
-//        track.setEvent("Item Purchased");
-//        ObjectMapper mapper = new ObjectMapper();
-//        track.setUserId("f4ca124298");
-//        track.setTimestamp(Date.from(Instant.EPOCH));
-//        Properties properties = new Properties();
-//        properties.setAdditionalProperty("revenue", 393.5);
-//        properties.setAdditionalProperty("shipping", "2-day");
-//        track.setProperties(properties);
-//        Map<String, Object> map = mapper.convertValue(properties, Map.class);
-        analytics.enqueue(TrackMessage.builder("Item Deported")
-                .userId("xfdfs343dd").timestamp(Date.from(Instant.now()))
-                .properties(ImmutableMap.<String, Object>builder()
-                        .put("revenue", 99.95)
-                        .put("shipping", "1-day")
-                        .build()
-                )
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> properties = mapper.convertValue(track.getProperties(), Map.class);
+        analytics.enqueue(TrackMessage.builder(track.getEvent())
+                .userId(track.getUserId()).timestamp(Date.from(Instant.now()))
+                .properties(properties)
         );
     }
 
     public void sendGroupMessage(Group group){
-        analytics.enqueue(GroupMessage.builder("KKK")
-                .userId("xfdfs343dd").timestamp(Date.from(Instant.now()))
-                .traits(ImmutableMap.<String, Object>builder()
-                        .put("name", "Segment")
-                        .put("size", 43)
-                        .build()
-                )
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> traitsMap = mapper.convertValue(group.getTraits(), Map.class);
+        analytics.enqueue(GroupMessage.builder(group.getGroupId())
+                .userId(group.getUserId()).timestamp(Date.from(Instant.now()))
+                .traits(traitsMap)
         );
     }
 
