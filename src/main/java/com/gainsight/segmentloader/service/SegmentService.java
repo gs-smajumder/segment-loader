@@ -6,7 +6,6 @@ import com.gainsight.segmentloader.pojo.Identify;
 import com.gainsight.segmentloader.pojo.Track;
 import com.gainsight.segmentloader.util.Constants;
 import com.gainsight.segmentloader.util.SegmentLog;
-import com.google.common.collect.ImmutableMap;
 import com.segment.analytics.Analytics;
 import com.segment.analytics.messages.GroupMessage;
 import com.segment.analytics.messages.IdentifyMessage;
@@ -21,6 +20,7 @@ import java.util.concurrent.TimeUnit;
  * Created by samujjal on 15/02/17.
  */
 public class SegmentService {
+    private final int SLEEP_MINUTES = Integer.parseInt(Constants.properties.getProperty("thread.minutes.sleep"));
     private final String WRITE_KEY = Constants.properties.getProperty("segment.writekey");
     private final Analytics analytics = Analytics.builder(WRITE_KEY)
             //            .log(SegmentLog.STDOUT)
@@ -58,7 +58,7 @@ public class SegmentService {
     }
 
     public void closePipe() throws InterruptedException {
-        Thread.sleep(TimeUnit.SECONDS.toMillis(30));
+        Thread.sleep(TimeUnit.MINUTES.toMillis(10));
         analytics.shutdown();
     }
 }
